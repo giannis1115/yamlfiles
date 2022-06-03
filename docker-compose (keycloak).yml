@@ -1,0 +1,30 @@
+version: '2'
+services:
+  keycloak:
+      image: jboss/keycloak
+      container_name: keycloakw-test
+      environment:
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: admin
+        PROXY_ADDRESS_FORWARDING: "true"
+        JDBC_PARAMS: ssl=true
+        HTTP_PROXY: http://10.101.10.128:8080
+      ports:
+              - "8444:8443"
+      networks:
+        keycloak-net2:
+          ipv4_address: 178.18.2.2
+      volumes:
+        - ./standalone.xml:/opt/jboss/keycloak/standalone/configuration/standalone.xml
+        - ./themes:/opt/jboss/keycloak/themes 
+        - ./keycloak.jks:/opt/jboss/keycloak/standalone/configuration/keystore.jks
+        - ./certs:/etc/x509/https
+        - ./x509.sh:/opt/jboss/tools/x509.sh
+networks:
+  keycloak-net2:
+    ipam:
+      config:  
+       - subnet: 178.18.2.1/24
+         gateway: 178.18.2.1
+volumes:
+  keycloak-vol:
